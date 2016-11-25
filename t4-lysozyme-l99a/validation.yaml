@@ -1,0 +1,74 @@
+options:
+  minimize: yes
+  verbose: yes
+  number_of_iterations: 1500
+  temperature: 300*kelvin
+  pressure: 1*atmosphere
+  output_dir: .
+  resume_setup: yes
+  resume_simulation: yes
+  platform: OpenCL
+
+molecules:
+  t4-lysozyme:
+    filepath: input/181L.pdbfixer.pdb
+  benzene:
+    filepath: input/benzene.mol2
+    openeye:
+      quacpac: am1-bcc
+    antechamber:
+      charge_method: null
+  ethylbenzene:
+    filepath: input/ethylbenzene.mol2
+    openeye:
+      quacpac: am1-bcc
+    antechamber:
+      charge_method: null
+  isobutylbenzene:
+    filepath: input/isobutylbenzene.mol2
+    openeye:
+      quacpac: am1-bcc
+    antechamber:
+      charge_method: null
+  indene:
+    filepath: input/indene.mol2
+    openeye:
+      quacpac: am1-bcc
+    antechamber:
+      charge_method: null
+
+
+solvents:
+  PME:
+    nonbonded_method: PME
+    nonbonded_cutoff: 10*angstroms
+    clearance: 14*angstroms
+    positive_ion: Na+
+    negative_ion: Cl-
+
+
+systems:
+  t4-ligand:
+    receptor: t4-lysozyme
+    ligand: !Combinatorial [benzene, ethylbenzene, isobutylbenzene, indene]
+    solvent: PME
+    leap:
+      parameters: [oldff/leaprc.ff96, leaprc.gaff]
+
+
+protocols:
+  absolute-binding:
+    complex:
+      alchemical_path:
+        lambda_electrostatics: [1.00, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+        lambda_sterics:        [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.99, 0.98, 0.97, 0.96, 0.94, 0.90, 0.84, 0.78, 0.72, 0.66, 0.60, 0.54, 0.48, 0.42, 0.36, 0.30, 0.24, 0.18, 0.12, 0.06, 0.00]
+    solvent:
+      alchemical_path:
+        lambda_electrostatics: [1.00, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+        lambda_sterics:        [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.99, 0.98, 0.97, 0.96, 0.94, 0.90, 0.84, 0.78, 0.72, 0.66, 0.60, 0.54, 0.48, 0.42, 0.36, 0.30, 0.24, 0.18, 0.12, 0.06, 0.00]
+
+experiments:
+  system: t4-ligand
+  protocol: absolute-binding
+  restraint:
+    type: Harmonic
