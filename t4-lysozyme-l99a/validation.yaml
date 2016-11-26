@@ -7,7 +7,6 @@ options:
   output_dir: .
   resume_setup: yes
   resume_simulation: yes
-  platform: OpenCL
 
 molecules:
   t4-lysozyme:
