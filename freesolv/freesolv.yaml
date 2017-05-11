@@ -25,7 +25,7 @@ solvents:
     nonbonded_method: PME
     nonbonded_cutoff: 11*angstroms
     switch_distance: 10*angstroms
-    ewald_error_tolerance: 1e-5
+    ewald_error_tolerance: 1.0e-5
     clearance: 13*angstroms
   vacuum:
     nonbonded_method: NoCutoff
@@ -36,7 +36,7 @@ systems:
     solvent1: water
     solvent2: vacuum
     leap:
-      parameters: [leaprc.water.tip3p, leaprc.gaff]
+      parameters: [leaprc.gaff, leaprc.protein.ff14SB, leaprc.water.tip3p]
 
 protocols:
   hydration-protocol:
