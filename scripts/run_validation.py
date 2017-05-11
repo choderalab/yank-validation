@@ -6,6 +6,8 @@ import glob
 import yaml
 import numpy as np
 
+from simtk import unit
+
 from yank import mpi
 from yank.analyze import get_analyzer
 from yank.yamlbuild import YamlBuilder
@@ -16,7 +18,12 @@ MAX_Z_SCORE = 6
 
 
 def run_validation():
-    """Run all validation tests."""
+    """Run all validation tests.
+
+    This is probably best done by running the different validation set
+    singularly since the optimal number of GPUs depends on the protocol.
+
+    """
     for yank_script_filepath in glob.glob(os.path.join('..', '*', '*.yaml')):
         print('Running {}...'.format(os.path.basename(yank_script_filepath)))
         yaml_builder = YamlBuilder(yank_script_filepath)
@@ -61,7 +68,9 @@ def analyze_directory(experiment_dir):
         dDeltaF += analysis[phase_name]['dDeltaF']**2
     dDeltaF = np.sqrt(dDeltaF)
 
-    return DeltaF, dDeltaF
+    # Convert from kT units to kcal/mol
+    unit_conversion = kT / unit.kilocalories_per_mole
+    return DeltaF * unit_conversion, dDeltaF * unit_conversion
 
 
 @mpi.on_single_node(0)
@@ -78,9 +87,8 @@ def print_analysis(experiment_name, expected_free_energy, obtained_free_energy):
         The pair (DeltaF, dDeltaF) in kT from the calculation.
 
     """
-    expected_DeltaF = expected_free_energy[0]
-    expected_dDeltaF = expected_free_energy[1]
-    obtained_DeltaF = obtained_free_energy[0]
+    expected_DeltaF, expected_dDeltaF = expected_free_energy * unit.kilocalories_per_mole
+    obtained_DeltaF, obtained_dDeltaF = obtained_free_energy
 
     # Determine if test has passed.
     z_score = (obtained_DeltaF - expected_DeltaF) / expected_dDeltaF
@@ -88,11 +96,11 @@ def print_analysis(experiment_name, expected_free_energy, obtained_free_energy):
 
     # Print results.
     print('{}: {}\n'
-          '\texpected: {} * kT\n'
-          '\tobtained: {} * kT\n'
-          '\tZ-score {}:'.format(experiment_name, 'OK' if test_passed else 'FAIL',
-                                 expected_free_energy,
-                                 obtained_free_energy,
+          '\texpected: {} +- {} kcal/mol\n'
+          '\tobtained: {} +- {} kcal/mol\n'
+          '\tZ-score: {}'.format(experiment_name, 'OK' if test_passed else 'FAIL',
+                                 expected_DeltaF, expected_dDeltaF,
+                                 obtained_DeltaF, obtained_dDeltaF,
                                  z_score))
 
 
@@ -119,5 +127,5 @@ def run_analysis():
 
 
 if __name__ == '__main__':
-    run_validation()
+    # run_validation()
     run_analysis()
