@@ -3,6 +3,7 @@ options:
   minimize: yes
   verbose: no
   output_dir: .
+  checkpoint_interval: 50
   temperature: 298.15*kelvin
   pressure: 1*atmosphere
   constraints: HBonds
@@ -26,7 +27,7 @@ solvents:
     nonbonded_cutoff: 11*angstroms
     switch_distance: 10*angstroms
     ewald_error_tolerance: 1.0e-5
-    clearance: 13*angstroms
+    clearance: 14*angstroms
   vacuum:
     nonbonded_method: NoCutoff
 
