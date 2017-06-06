@@ -1,0 +1,7 @@
+# Each entry is name_of_yank_experiment: [free_energy_in_kcal_per_mol, statistical_error]
+---
+hydrationsystemmolecule0: [3.08, 0.03]
+hydrationsystemmolecule1: [-0.79, 0.03]
+hydrationsystemmolecule2: [-5.54, 0.03]
+hydrationsystemmolecule3: [-8.82, 0.02]
+hydrationsystemmolecule4: [-17.74, 0.03]

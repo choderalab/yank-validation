@@ -1,11 +1,16 @@
 ---
 options:
   minimize: yes
-  verbose: yes
+  verbose: no
   output_dir: .
-  number_of_iterations: 1500
-  temperature: 300*kelvin
+  checkpoint_interval: 50
+  temperature: 298.15*kelvin
   pressure: 1*atmosphere
+  constraints: HBonds
+  timestep: 2*femtoseconds
+  nsteps_per_iteration: 500
+  number_of_iterations: 5000
+  anisotropic_dispersion_cutoff: 16.0*angstroms
 
 molecules:
   molecule:
@@ -19,8 +24,10 @@ molecules:
 solvents:
   water:
     nonbonded_method: PME
-    nonbonded_cutoff: 9*angstroms
-    clearance: 15*angstroms
+    nonbonded_cutoff: 11*angstroms
+    switch_distance: 10*angstroms
+    ewald_error_tolerance: 1.0e-5
+    clearance: 14*angstroms
   vacuum:
     nonbonded_method: NoCutoff
 
@@ -30,14 +37,14 @@ systems:
     solvent1: water
     solvent2: vacuum
     leap:
-      parameters: [oldff/leaprc.ff96, leaprc.gaff]
+      parameters: [leaprc.gaff, leaprc.protein.ff14SB, leaprc.water.tip3p]
 
 protocols:
   hydration-protocol:
     solvent1:
       alchemical_path:
-        lambda_electrostatics: [1.00, 0.75, 0.50, 0.25, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
-        lambda_sterics:        [1.00, 1.00, 1.00, 1.00, 1.00, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10, 0.00]
+        lambda_electrostatics: [1.00, 0.75, 0.50, 0.25, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+        lambda_sterics:        [1.00, 1.00, 1.00, 1.00, 1.00, 0.95, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05, 0.00]
     solvent2:
       alchemical_path:
         lambda_electrostatics: [1.00, 0.75, 0.50, 0.25, 0.00]
