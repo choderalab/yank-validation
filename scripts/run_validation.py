@@ -1,7 +1,10 @@
 #!/usr/local/bin/env python
 
 import os
+import sys
 import glob
+import json
+import logging
 
 import yaml
 import numpy as np
@@ -15,6 +18,9 @@ from yank.yamlbuild import YamlBuilder
 
 # A validation test fails when its Z-score exceeds this threshold.
 MAX_Z_SCORE = 6
+
+# Set verbosity.
+logging.basicConfig(level=logging.DEBUG)
 
 
 def run_validation():
@@ -46,6 +52,8 @@ def analyze_directory(experiment_dir):
         Statistical error of the free energy estimate.
 
     """
+    print('Analyzing {}'.format(experiment_dir))
+    sys.stdout.flush()
     analysis_script_filepath = os.path.join(experiment_dir, 'analysis.yaml')
 
     # Load sign of alchemical phases.
@@ -58,12 +66,12 @@ def analyze_directory(experiment_dir):
         phase_path = os.path.join(experiment_dir, phase_name + '.nc')
         analyzer = get_analyzer(phase_path)
         analysis[phase_name] = analyzer.analyze_phase()
-        kT = analysis.kT
+        kT = analyzer.kT
 
     # Compute free energy.
     DeltaF = 0.0
     dDeltaF = 0.0
-    for phase_name, sign in analysis:
+    for phase_name, sign in analysis_script:
         DeltaF -= sign * (analysis[phase_name]['DeltaF'] + analysis[phase_name]['DeltaF_standard_state_correction'])
         dDeltaF += analysis[phase_name]['dDeltaF']**2
     dDeltaF = np.sqrt(dDeltaF)
@@ -87,7 +95,7 @@ def print_analysis(experiment_name, expected_free_energy, obtained_free_energy):
         The pair (DeltaF, dDeltaF) in kT from the calculation.
 
     """
-    expected_DeltaF, expected_dDeltaF = expected_free_energy * unit.kilocalories_per_mole
+    expected_DeltaF, expected_dDeltaF = expected_free_energy
     obtained_DeltaF, obtained_dDeltaF = obtained_free_energy
 
     # Determine if test has passed.
@@ -96,9 +104,9 @@ def print_analysis(experiment_name, expected_free_energy, obtained_free_energy):
 
     # Print results.
     print('{}: {}\n'
-          '\texpected: {} +- {} kcal/mol\n'
-          '\tobtained: {} +- {} kcal/mol\n'
-          '\tZ-score: {}'.format(experiment_name, 'OK' if test_passed else 'FAIL',
+          '\texpected: {:.3f} +- {:.3f} kcal/mol\n'
+          '\tobtained: {:.3f} +- {:.3f} kcal/mol\n'
+          '\tZ-score: {:.3f}'.format(experiment_name, 'OK' if test_passed else 'FAIL',
                                  expected_DeltaF, expected_dDeltaF,
                                  obtained_DeltaF, obtained_dDeltaF,
                                  z_score))
@@ -115,15 +123,20 @@ def run_analysis():
 
         # Find all experiments that we have run so far.
         testset_dir = os.path.dirname(expected_output_filepath)
-        run_experiments_names = glob.glob(os.path.join(testset_dir, 'experiments', '*'))
+        run_experiments_paths = glob.glob(os.path.join(testset_dir, 'experiments', '*'))
 
         # Distribute analysis of all experiments across nodes.
-        free_energies = mpi.distribute(analyze_directory, run_experiments_names,
+        free_energies = mpi.distribute(analyze_directory, run_experiments_paths,
                                        send_results_to='all')
 
-        # Print comparisons.
-        for experiment_id, experiment_name in run_experiments_names:
+        # Store and print results.
+        analysis_summary = dict()
+        for experiment_id, experiment_path in enumerate(run_experiments_paths):
+            experiment_name = os.path.basename(experiment_path)
+            analysis_summary[experiment_name] = [expected_output[experiment_name], free_energies[experiment_id]]
             print_analysis(experiment_name, expected_output[experiment_name], free_energies[experiment_id])
+        with open('analysis_summary.json', 'w') as f:
+            json.dump(analysis_summary, f)
 
 
 if __name__ == '__main__':
