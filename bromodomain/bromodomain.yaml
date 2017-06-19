@@ -84,7 +84,7 @@ experiment-ligand2:
     <<: *boresch-force-constants
 
 experiment-ligand5:
-  system: ligand2
+  system: ligand5
   protocol: absolute-binding
   restraint:
     type: Boresch
@@ -98,7 +98,7 @@ experiment-ligand5:
     <<: *boresch-force-constants
 
 experiment-ligand8:
-  system: ligand2
+  system: ligand8
   protocol: absolute-binding
   restraint:
     type: Boresch
@@ -112,7 +112,7 @@ experiment-ligand8:
     <<: *boresch-force-constants
 
 experiment-ligand10:
-  system: ligand2
+  system: ligand10
   protocol: absolute-binding
   restraint:
     type: Boresch
