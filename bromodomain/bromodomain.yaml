@@ -1,0 +1,128 @@
+---
+options:
+  resume_setup: yes
+  resume_simulation: yes
+  checkpoint_interval: 50
+  minimize: yes
+  verbose: no
+  output_dir: .
+  temperature: 298.15*kelvin
+  pressure: 1*atmosphere
+  constraints: HBonds
+  timestep: 2*femtoseconds
+  nsteps_per_iteration: 1000
+  number_of_iterations: 5000
+  anisotropic_dispersion_cutoff: auto
+
+
+solvents:
+  PME:
+    nonbonded_method: PME
+    nonbonded_cutoff: 11*angstroms  # original paper is 12A for electrostatics and 10A for VdW
+    switch_distance: 10*angstroms  # original paper is 9A
+    ewald_error_tolerance: 1.0e-4  # original paper is 1e-6, spline order 6, spacing 1A
+
+
+common_system_config: &common_system_config
+  solvent: PME
+  ligand_dsl: resname LIG
+  gromacs_include_dir: gromacs_include
+
+systems:
+  ligand2:
+    phase1_path: [input/ligand2/complex.top, input/ligand2/complex.gro]
+    phase2_path: [input/ligand2/solvent.top, input/ligand2/solvent.gro]
+    <<: *common_system_config
+  ligand5:
+    phase1_path: [input/ligand5/complex.top, input/ligand5/complex.gro]
+    phase2_path: [input/ligand5/solvent.top, input/ligand5/solvent.gro]
+    <<: *common_system_config
+  ligand8:
+    phase1_path: [input/ligand8/complex.top, input/ligand8/complex.gro]
+    phase2_path: [input/ligand8/solvent.top, input/ligand8/solvent.gro]
+    <<: *common_system_config
+  ligand10:
+    phase1_path: [input/ligand10/complex.top, input/ligand10/complex.gro]
+    phase2_path: [input/ligand10/solvent.top, input/ligand10/solvent.gro]
+    <<: *common_system_config
+
+
+protocols:
+  absolute-binding:
+    complex:
+      alchemical_path:
+        lambda_restraints:     [0.0, 0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.20, 0.30, 0.50, 0.75, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00]
+        lambda_electrostatics: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+        lambda_sterics:        [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05, 0.00]
+    solvent:
+      alchemical_path:
+        lambda_electrostatics: [1.00, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+        lambda_sterics:        [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05, 0.00]
+
+
+# The parameters of the Boresch restraints have been taken from the top files.
+boresch-force-constants: &boresch-force-constants
+  K_r: 4184.0*kilojoules_per_mole/nanometers**2
+  K_thetaA: 41.84*kilojoules_per_mole/radians**2
+  K_thetaB: 41.84*kilojoules_per_mole/radians**2
+  K_phiA: 41.84*kilojoules_per_mole/radians**2
+  K_phiB: 41.84*kilojoules_per_mole/radians**2
+  K_phiC: 41.84*kilojoules_per_mole/radians**2
+
+experiment-ligand2:
+  system: ligand2
+  protocol: absolute-binding
+  restraint:
+    type: Boresch
+    restrained_atoms: [1667, 1657, 1655, 2142, 2141, 2139]
+    r_aA0: 0.615*nanometers
+    theta_A0: 92.14*degrees
+    theta_B0: 107.4*degrees
+    phi_A0: 157.05*degrees
+    phi_B0: -129.56*degrees
+    phi_C0: 166.61*degrees
+    <<: *boresch-force-constants
+
+experiment-ligand5:
+  system: ligand5
+  protocol: absolute-binding
+  restraint:
+    type: Boresch
+    restrained_atoms: [1592, 1585, 1583, 2127, 2121, 2141]
+    r_aA0: 0.561*nanometers
+    theta_A0: 49.51*degrees
+    theta_B0: 56.91*degrees
+    phi_A0: -134.79*degrees
+    phi_B0: -88.62*degrees
+    phi_C0: 178.83*degrees
+    <<: *boresch-force-constants
+
+experiment-ligand8:
+  system: ligand8
+  protocol: absolute-binding
+  restraint:
+    type: Boresch
+    restrained_atoms: [1592, 1585, 1583, 2140, 2139, 2136]
+    r_aA0: 0.607*nanometers
+    theta_A0: 44.25*degrees
+    theta_B0: 53.29*degrees
+    phi_A0: -135.0*degrees
+    phi_B0: -110.15*degrees
+    phi_C0: 176.3*degrees
+    <<: *boresch-force-constants
+
+experiment-ligand10:
+  system: ligand10
+  protocol: absolute-binding
+  restraint:
+    type: Boresch
+    restrained_atoms: [697, 695, 685, 2126, 2121, 2133]
+    r_aA0: 0.576*nanometers
+    theta_A0: 29.68*degrees
+    theta_B0: 123.77*degrees
+    phi_A0: 174.69*degrees
+    phi_B0: 176.4*degrees
+    phi_C0: -41.76*degrees
+    <<: *boresch-force-constants
+
+experiments: [experiment-ligand2, experiment-ligand5, experiment-ligand8, experiment-ligand10]
