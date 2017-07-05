@@ -1,0 +1,68 @@
+options:
+  minimize: yes
+  number_of_equilibration_iterations: 1000
+  verbose: no
+  number_of_iterations: 10
+  temperature: 300*kelvin
+  pressure: 1*atmosphere
+  output_dir: output_path_optimization
+  resume_setup: yes
+  resume_simulation: yes
+  timestep: 1.0*femtoseconds
+
+molecules:
+  t4-lysozyme:
+    filepath: ../input/181L.pdbfixer.pdb
+  benzene:
+    filepath: ../input/benzene.mol2
+    openeye:
+      quacpac: am1-bcc
+    antechamber:
+      charge_method: null
+
+
+solvents:
+  PME:
+    nonbonded_method: PME
+    nonbonded_cutoff: 10*angstroms
+    clearance: 14*angstroms
+    positive_ion: Na+
+    negative_ion: Cl-
+    ewald_error_tolerance: 1.0e-6
+  GBSAOBC2:
+    nonbonded_method: NoCutoff
+    implicit_solvent: OBC2
+  vacuum:
+    nonbonded_method: NoCutoff
+
+
+systems:
+  t4-ligand:
+    receptor: t4-lysozyme
+    ligand: benzene
+    solvent: PME
+    leap:
+      parameters: [oldff/leaprc.ff96, leaprc.gaff]
+  hydration:
+    solute: benzene
+    solvent1: PME
+    solvent2: vacuum
+    leap:
+      parameters: [oldff/leaprc.ff96, leaprc.gaff]
+
+
+protocols:
+  test-path:
+    complex:
+      alchemical_path:
+        lambda_electrostatics: [1.00, 0.50, 0.00, 0.00, 0.00]
+        lambda_sterics:        [1.00, 1.00, 1.00, 0.50, 0.00]
+    solvent:
+      alchemical_path:
+        lambda_electrostatics: [1.00, 0.50, 0.00, 0.00, 0.00]
+        lambda_sterics:        [1.00, 1.00, 1.00, 0.50, 0.00]
+
+
+experiments:
+  system: hydration
+  protocol: test-path
