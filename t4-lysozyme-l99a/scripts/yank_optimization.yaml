@@ -1,20 +1,27 @@
+---
 options:
   minimize: yes
   number_of_equilibration_iterations: 1000
-  verbose: no
+  verbose: yes
   number_of_iterations: 10
   temperature: 300*kelvin
   pressure: 1*atmosphere
   output_dir: output_path_optimization
   resume_setup: yes
   resume_simulation: yes
-  timestep: 1.0*femtoseconds
+  timestep: 1.5*femtoseconds
 
 molecules:
   t4-lysozyme:
     filepath: ../input/181L.pdbfixer.pdb
   benzene:
     filepath: ../input/benzene.mol2
+    openeye:
+      quacpac: am1-bcc
+    antechamber:
+      charge_method: null
+  phenol:
+    filepath: ../input/phenol.mol2
     openeye:
       quacpac: am1-bcc
     antechamber:
@@ -28,7 +35,7 @@ solvents:
     clearance: 14*angstroms
     positive_ion: Na+
     negative_ion: Cl-
-    ewald_error_tolerance: 1.0e-6
+    ewald_error_tolerance: 1.0e-4
   GBSAOBC2:
     nonbonded_method: NoCutoff
     implicit_solvent: OBC2
@@ -39,7 +46,7 @@ solvents:
 systems:
   t4-ligand:
     receptor: t4-lysozyme
-    ligand: benzene
+    ligand: phenol
     solvent: PME
     leap:
       parameters: [oldff/leaprc.ff96, leaprc.gaff]
@@ -64,5 +71,5 @@ protocols:
 
 
 experiments:
-  system: hydration
+  system: t4-ligand
   protocol: test-path
