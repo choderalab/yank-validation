@@ -141,11 +141,14 @@ def find_optimal_protocol(thermodynamic_state, sampler_state, mcmc_move,
 
 
 def main():
-    name = 'phenol_restrained_1000eq'
+    name = 'benzene_restrained_100eq'
     yamlbuilder = yamlbuild.YamlBuilder('yank_optimization.yaml')
-    lambda_values = np.linspace(0.0, 1.0, num=101)  # 0.01 spaced array of values from 0 to 1.
-    reversed_lambda_values = np.array(list(reversed(lambda_values)))
-    assert lambda_values[0] == 0.0 and lambda_values[-1] == 1.0  # check for truncation errors.
+    restraint_lambda_values = np.linspace(0.0, 1.0, num=101)  # 0.01 spaced array of values from 0 to 1.
+    electrostatics_lambda_values = np.array(list(reversed(np.linspace(0.0, 1.0, num=101))))
+    sterics_lambda_values = np.array(list(reversed(np.linspace(0.0, 1.0, num=1001))))
+    assert restraint_lambda_values[0] == 0.0 and restraint_lambda_values[-1] == 1.0  # check for truncation errors.
+    assert electrostatics_lambda_values[0] == 1.0 and electrostatics_lambda_values[-1] == 0.0  # check for truncation errors.
+    assert sterics_lambda_values[0] == 1.0 and sterics_lambda_values[-1] == 0.0  # check for truncation errors.
 
     optimal_protocols = {}
 
@@ -154,12 +157,12 @@ def main():
             phase_id = phase.storage
 
             # We support only lambda sterics and electrostatics for now.
-            state_parameters = [('lambda_electrostatics', reversed_lambda_values),
-                                ('lambda_sterics', reversed_lambda_values)]
+            state_parameters = [('lambda_electrostatics', electrostatics_lambda_values),
+                                ('lambda_sterics', sterics_lambda_values)]
 
             # We may also need to slowly turn on a Boresch restraint.
             if isinstance(phase.restraint, restraints.Boresch):
-                state_parameters.append(('lambda_restraints', lambda_values))
+                state_parameters.append(('lambda_restraints', restraints_lambda_values))
 
             # We only need to create a single state.
             phase.protocol = {par[0]: [par[1][0]] for par in state_parameters}
@@ -178,9 +181,9 @@ def main():
 
             # Restrain the protein heavy atoms to avoid drastic
             # conformational changes (possibly after equilibration).
-            if len(phase.topography.receptor_atoms) != 0:
-                restrain_atoms(thermodynamic_state, sampler_state, phase.topography.topology,
-                               atoms_dsl='name CA', sigma=3.0*unit.angstroms)
+            #if len(phase.topography.receptor_atoms) != 0:
+            #    restrain_atoms(thermodynamic_state, sampler_state, phase.topography.topology,
+            #                   atoms_dsl='name CA', sigma=3.0*unit.angstroms)
 
             # Find protocol.
             protocol = find_optimal_protocol(thermodynamic_state, sampler_state,
