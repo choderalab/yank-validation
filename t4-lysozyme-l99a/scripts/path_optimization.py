@@ -141,7 +141,7 @@ def find_optimal_protocol(thermodynamic_state, sampler_state, mcmc_move,
 
 
 def main():
-    name = 'benzene_restrained_100eq'
+    name = 'phenol_restrained_1000eq'
     yamlbuilder = yamlbuild.YamlBuilder('yank_optimization.yaml')
     restraint_lambda_values = np.linspace(0.0, 1.0, num=101)  # 0.01 spaced array of values from 0 to 1.
     electrostatics_lambda_values = np.array(list(reversed(np.linspace(0.0, 1.0, num=101))))
@@ -181,9 +181,9 @@ def main():
 
             # Restrain the protein heavy atoms to avoid drastic
             # conformational changes (possibly after equilibration).
-            #if len(phase.topography.receptor_atoms) != 0:
-            #    restrain_atoms(thermodynamic_state, sampler_state, phase.topography.topology,
-            #                   atoms_dsl='name CA', sigma=3.0*unit.angstroms)
+            if len(phase.topography.receptor_atoms) != 0:
+                restrain_atoms(thermodynamic_state, sampler_state, phase.topography.topology,
+                               atoms_dsl='name CA', sigma=3.0*unit.angstroms)
 
             # Find protocol.
             protocol = find_optimal_protocol(thermodynamic_state, sampler_state,
