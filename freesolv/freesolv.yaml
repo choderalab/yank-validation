@@ -28,6 +28,7 @@ solvents:
     switch_distance: 10*angstroms
     ewald_error_tolerance: 1.0e-5
     clearance: 14*angstroms
+    solvent_model: tip3p
   vacuum:
     nonbonded_method: NoCutoff
 
