@@ -127,7 +127,7 @@ def run_analysis():
 
         # Distribute analysis of all experiments across nodes.
         free_energies = mpi.distribute(analyze_directory, run_experiments_paths,
-                                       send_results_to='all')
+                                       send_results_to='all', group_nodes=1)
 
         # Store and print results.
         analysis_summary = dict()
