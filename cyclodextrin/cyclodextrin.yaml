@@ -1,0 +1,97 @@
+---
+options:
+  verbose: yes
+  resume_setup: yes
+  resume_simulation: yes
+  output_dir: .
+  processes_per_experiment: 4
+
+  temperature: 298.15*kelvin
+  pressure: 1*atmosphere
+  constraints: HBonds
+  anisotropic_dispersion_cutoff: auto
+
+  minimize: yes
+  number_of_iterations: .inf
+  nsteps_per_iteration: 500
+  timestep: 2*femtoseconds
+  checkpoint_interval: 50
+
+  annihilate_electrostatics: yes
+  annihilate_sterics: no
+
+  #online_analysis_interval: 100
+  #online_analysis_target_error: 0.5
+
+
+# Molecules
+# ---------
+
+molecules:
+  acd:
+    filepath: input/host-acd.mol2
+    antechamber:
+      charge_method: bcc
+  octanoate:
+    filepath: input/guest-8.mol2
+    antechamber:
+      charge_method: bcc
+  bcd:
+    filepath: input/host-bcd.mol2
+    antechamber:
+      charge_method: bcc
+  cyclooctanol:
+    filepath: input/guest-s17.mol2
+    antechamber:
+      charge_method: bcc
+
+
+# Solvents
+# --------
+
+solvents:
+  tip3p:
+    nonbonded_method: PME
+    clearance: 12*angstroms
+    nonbonded_cutoff: 11*angstroms
+    switch_distance: 10*angstroms
+    solvent_model: tip3p
+    ewald_error_tolerance: 1.0e-4
+    positive_ion: Na+
+    negative_ion: Cl-
+    ionic_strength: 50*millimolar
+    leap:
+      parameters: [leaprc.protein.ff14SB, leaprc.water.tip3p]
+
+
+# Experiments
+# -----------
+
+systems:
+  acd-octanoate:
+    receptor: acd
+    ligand: octanoate
+    solvent: tip3p
+    leap:
+      parameters: gaff17.dat
+  bcd-cyclooctanol:
+    receptor: bcd
+    ligand: cyclooctanol
+    solvent: tip3p
+    leap:
+      parameters: gaff17.dat
+
+protocols:
+  binding-auto:
+    complex:
+      alchemical_path: auto
+    solvent:
+      alchemical_path: auto
+
+experiments:
+  system: !Combinatorial [acd-octanoate, bcd-cyclooctanol]
+  protocol: binding-auto
+  restraint:
+    type: !Combinatorial [Harmonic, FlatBottom]
+    restrained_ligand_atoms: (resname MOL) and (mass > 1.5)
+    restrained_receptor_atoms: (resname MGO) and (mass > 1.5)
