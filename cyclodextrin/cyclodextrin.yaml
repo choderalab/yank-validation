@@ -20,8 +20,8 @@ options:
   annihilate_electrostatics: yes
   annihilate_sterics: no
 
-  #online_analysis_interval: 100
-  #online_analysis_target_error: 0.5
+  online_analysis_interval: 100
+  online_analysis_target_error: 0.5
 
 
 # Molecules
