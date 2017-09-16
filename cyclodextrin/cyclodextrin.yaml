@@ -4,7 +4,7 @@ options:
   resume_setup: yes
   resume_simulation: yes
   output_dir: .
-  processes_per_experiment: 4
+  #processes_per_experiment: 4
 
   temperature: 298.15*kelvin
   pressure: 1*atmosphere
@@ -21,7 +21,8 @@ options:
   annihilate_sterics: no
 
   online_analysis_interval: 100
-  online_analysis_target_error: 0.5
+  online_analysis_target_error: 0.2
+  online_analysis_minimum_iterations: 2000
 
 
 # Molecules

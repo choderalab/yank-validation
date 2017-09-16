@@ -12,4 +12,4 @@ source activate validation
 JOBID=0
 build_mpirun_configfile --hostfilepath="hostfile$JOBID" --configfilepath="configfile$JOBID" "yank script --yaml=cyclodextrin.yaml"
 mpiexec.hydra -f hostfile$JOBID -configfile configfile$JOBID
-#yank script -y cyclodextrin.yaml --jobid=0 --njobs=4
+#yank script -y cyclodextrin.yaml --jobid=$JOBID --njobs=4
