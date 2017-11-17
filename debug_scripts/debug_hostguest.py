@@ -40,10 +40,10 @@ def compute_restraint_distance(positions, n_atoms_group1, weights_group1, weight
     return distance
 
 
-def compute_ssd(restraint_force, distance_threshold, energy_threshold, kT):
+def compute_ssc(restraint_force, distance_threshold, energy_threshold, kT):
     """Compute the standard state correction."""
     r_min = 0 * unit.nanometers
-    r_max = 100 * unit.nanometers  # TODO: Use maximum distance between atoms?
+    r_max = distance_threshold
 
     # Create a System object containing two particles connected by the reference force
     system = openmm.System()
@@ -82,9 +82,6 @@ def compute_ssd(restraint_force, distance_threshold, energy_threshold, kT):
 
         """
         positions[1, 0] = r * unit.nanometers
-        if positions[1, 0] > distance_threshold:
-            return 0.0
-
         context.setPositions(positions)
         state = context.getState(getEnergy=True)
         potential = state.getPotentialEnergy()
@@ -373,7 +370,7 @@ def test_volume_reduction(experiment_directory, all_distance_cutoffs,
 
         # Compute new standard state correction.
         print('\tComputing standard state correction...')
-        ssc = compute_ssd(restraint_force, distance_cutoff, energy_threshold, kT)
+        ssc = compute_ssc(restraint_force, distance_cutoff, energy_threshold, kT)
 
         # Print everything.
         print('\tSSC: {:.3f} kT'.format(ssc))
