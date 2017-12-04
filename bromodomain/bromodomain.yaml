@@ -1,18 +1,28 @@
 ---
 options:
+  # NOTE: You may need to activate the OpenCL platform until the CUDA NaN problem is solved (see openmm#1920).
+  # platform: OpenCL
+
+  verbose: no
   resume_setup: yes
   resume_simulation: yes
-  checkpoint_interval: 50
-  minimize: yes
-  verbose: no
   output_dir: .
+
   temperature: 298.15*kelvin
   pressure: 1*atmosphere
   constraints: HBonds
-  timestep: 2*femtoseconds
-  nsteps_per_iteration: 1000
-  number_of_iterations: 5000
   anisotropic_dispersion_cutoff: auto
+
+  minimize: yes
+  # NOTE: You may need an explicit equilibration until the CUDA NaN problem is solved (see openmm#1920).
+  # number_of_equilibration_iterations: 1000
+  # equilibration_timestep: 0.5*femtoseconds
+  number_of_iterations: 5000
+  nsteps_per_iteration: 1000
+  # NOTE: You may need a shorter timestep until the CUDA NaN problem is solved (see openmm#1920).
+  # timestep: 1.0*femtoseconds
+  timestep: 2.0*femtoseconds
+  checkpoint_interval: 100
 
 
 solvents:
@@ -74,7 +84,8 @@ experiment-ligand2:
   protocol: absolute-binding
   restraint:
     type: Boresch
-    restrained_atoms: [1667, 1657, 1655, 2142, 2141, 2139]
+    restrained_receptor_atoms: [1667, 1657, 1655]
+    restrained_ligand_atoms: [2142, 2141, 2139]
     r_aA0: 0.615*nanometers
     theta_A0: 92.14*degrees
     theta_B0: 107.4*degrees
@@ -88,7 +99,8 @@ experiment-ligand5:
   protocol: absolute-binding
   restraint:
     type: Boresch
-    restrained_atoms: [1592, 1585, 1583, 2127, 2121, 2141]
+    restrained_receptor_atoms: [1592, 1585, 1583]
+    restrained_ligand_atoms: [2127, 2121, 2141]
     r_aA0: 0.561*nanometers
     theta_A0: 49.51*degrees
     theta_B0: 56.91*degrees
@@ -102,7 +114,8 @@ experiment-ligand8:
   protocol: absolute-binding
   restraint:
     type: Boresch
-    restrained_atoms: [1592, 1585, 1583, 2140, 2139, 2136]
+    restrained_receptor_atoms: [1592, 1585, 1583]
+    restrained_ligand_atoms: [2140, 2139, 2136]
     r_aA0: 0.607*nanometers
     theta_A0: 44.25*degrees
     theta_B0: 53.29*degrees
@@ -116,7 +129,8 @@ experiment-ligand10:
   protocol: absolute-binding
   restraint:
     type: Boresch
-    restrained_atoms: [697, 695, 685, 2126, 2121, 2133]
+    restrained_receptor_atoms: [697, 695, 685]
+    restrained_ligand_atoms: [2126, 2121, 2133]
     r_aA0: 0.576*nanometers
     theta_A0: 29.68*degrees
     theta_B0: 123.77*degrees
