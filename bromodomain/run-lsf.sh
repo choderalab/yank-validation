@@ -1,11 +1,12 @@
 #!/bin/bash
 
-#BSUB -W 24:00
-#BSUB -q gpushared
-#BSUB -n 4 -R "rusage[ngpus_excl_p=1,mem=2]"
-#BSUB -m ls-gpu
+#BSUB -W 120:00
+#BSUB -e %J.err
+#BSUB -o %J.out
+#BSUB -q gpuqueue
+#BSUB -n 4 -R "rusage[mem=2]"
+#BSUB -gpu "num=1:mode=shared:mps=no:j_exclusive=yes"
 #BSUB -J "bromodomain"
-#BSUB -eo %J.out
 
 source activate validation
 build_mpirun_configfile "yank script --yaml=bromodomain.yaml"
