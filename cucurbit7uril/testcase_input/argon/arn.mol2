@@ -1,0 +1,12 @@
+@<TRIPOS>MOLECULE
+ARN
+    1     0     1     0     0
+SMALL
+No Charge or Current Charge
+
+
+@<TRIPOS>ATOM
+      1 Ar1         0.0000    0.0000    0.0000 Ar        1 ARN      0.000000
+@<TRIPOS>BOND
+@<TRIPOS>SUBSTRUCTURE
+     1 ARN         1 TEMP              0 ****  ****    0 ROOT
