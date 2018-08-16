@@ -3,7 +3,7 @@ options:
   verbose: yes
   resume_setup: yes
   resume_simulation: yes
-  output_dir: sams
+  output_dir: repex
   experiments_dir: experiments
 
   temperature: 298.15*kelvin
@@ -18,9 +18,7 @@ options:
 
   minimize: yes
 
-  processes_per_experiment: 1
-
-  checkpoint_interval: 1000
+  checkpoint_interval: 10
 
 mcmc_moves:
     langevin:
@@ -102,8 +100,8 @@ protocols:
 
 
 experiments:
-  sampler: sams
+  sampler: repex
   system: !Combinatorial [cb7-argon, cb7-a1, cb7-b2]
-  protocol: dense-absolute-binding
+  protocol: auto-absolute-binding
   restraint:
     type: Harmonic
