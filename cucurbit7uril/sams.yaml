@@ -21,6 +21,7 @@ options:
   processes_per_experiment: 1
 
   checkpoint_interval: 1000
+  switch_experiment_interval: 1000
 
 mcmc_moves:
     langevin:

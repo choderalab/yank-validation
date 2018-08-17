@@ -10,8 +10,8 @@
 #BSUB -q gpuqueue
 #
 # nodes: number of nodes and GPU request
-#BSUB -n 8
-#BSUB -gpu "num=4:j_exclusive=yes:mode=shared" -R "rusage[mem=36] span[ptile=4]"
+#BSUB -n 3
+#BSUB -gpu "num=3:j_exclusive=yes:mode=shared" -R "rusage[mem=48] span[ptile=3]"
 #
 # job name (default = name of script file)
 #BSUB -J "repex"

@@ -18,7 +18,10 @@ options:
 
   minimize: yes
 
+  processes_per_experiment: 1
+
   checkpoint_interval: 10
+  switch_experiment_interval: 10
 
 mcmc_moves:
     langevin:
