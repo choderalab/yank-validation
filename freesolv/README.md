@@ -2,14 +2,15 @@
 
 ## Manifest
 
-- `freesolv.yaml`: Setup and simulation protocol for YANK. The protocol is chosen to be as close as possible to the
+- `freesolv-mini.yaml`: Setup and simulation protocol for YANK. The protocol is chosen to be as close as possible to the
 one described in [1].
 - `freesolv-mini.smiles`: Sub-set of the [FreeSolv database](https://github.com/MobleyLab/FreeSolv) containing SMILES,
 name, experimental and computed hydration free energies of the molecules used for validation.
 - `expected_output.yaml`: Contains the free energies and statistical errors that are expected. It is used by the code
 for automatic analysis.
 - `run-yank.sh`: Bash script to run YANK serially.
-- `run-torque-yank.sh`: Torque script to run YANK with MPI on the cluster.
+- `run-lsf-sams.sh`: LSF submission script
+- `run-torque-yank.sh`: Torque submission script to run YANK with MPI on the cluster.
 - `README.md`: This file.
 
 ## Choice of the molecules from FreeSolv
@@ -35,3 +36,5 @@ were employed for the GROMACS simulations.
 - [1] Duarte Ramos Matos, G., Kyu, D.Y., Loeffler, H.H., Chodera, J.D., Shirts, M.R. and Mobley, D.L., 2017.
 Approaches for Calculating Solvation Free Energies and Enthalpies Demonstrated with an Update of the FreeSolv Database.
 Journal of Chemical & Engineering Data.
+
+The FreeSolv database can be found at: https://github.com/MobleyLab/FreeSolv
