@@ -31,5 +31,5 @@ fi
 
 # Run the simulation with verbose output:
 echo "Running simulation via MPI..."
-build_mpirun_configfile "yank script --yaml=freesolv.yaml"
+build_mpirun_configfile "yank script --yaml=freesolv-mini.yaml"
 mpirun -configfile configfile
