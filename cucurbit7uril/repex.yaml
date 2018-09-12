@@ -33,6 +33,7 @@ mcmc_moves:
         reassign_velocities: no
         splitting: 'V R O R V'
         n_steps: 1250
+        n_restart_attempts: 4
 
 samplers:
     sams:
@@ -103,7 +104,7 @@ protocols:
 
 
 experiments:
-  sampler: repex
+  sampler: sams
   system: !Combinatorial [cb7-argon, cb7-argon, cb7-argon, cb7-a1, cb7-a1, cb7-a1, cb7-b2, cb7-b2, cb7-b2]
   protocol: auto-absolute-binding
   restraint:
