@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Set walltime limit
-#BSUB -W 72:00
+#BSUB -W 5:59
 #
 # Set output file
 #BSUB -o sams.%J.log
