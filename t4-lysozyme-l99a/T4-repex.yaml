@@ -4,7 +4,7 @@ options:
   output_dir: repex
   temperature: 300*kelvin
   pressure: 1*atmosphere
-  switch_experiment_interval: 50
+  switch_experiment_interval: 10
   checkpoint_interval: 10
   resume_setup: yes
   resume_simulation: yes
@@ -14,14 +14,14 @@ options:
 
 mcmc_moves:
   langevin:
-    type: MCDisplacementMove # Monte Carlo ligand displacement
-    type: MCRotationMove # Monte Carlo ligand rotation
+    #type: MCDisplacementMove # Monte Carlo ligand displacement
+    #type: MCRotationMove # Monte Carlo ligand rotation
     type: LangevinSplittingDynamicsMove
     timestep: 4.0*femtosecond
     collision_rate: 1.0/picosecond
     reassign_velocities: yes
     splitting: 'V R O R V'
-    n_steps: 1250
+    n_steps: 250
     n_restart_attempts: 4
 
 samplers:
@@ -91,5 +91,6 @@ protocols:
 experiments:
   system: t4-ligand
   protocol: absolute-binding
+  sampler: repex
   restraint:
     type: Harmonic
