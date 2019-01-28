@@ -1,12 +1,45 @@
 options:
   minimize: yes
   verbose: yes
-  number_of_iterations: 1500
+  output_dir: repex
   temperature: 300*kelvin
   pressure: 1*atmosphere
-  output_dir: .
+  switch_experiment_interval: 10
+  checkpoint_interval: 10
   resume_setup: yes
   resume_simulation: yes
+  processes_per_experiment: 1
+  hydrogen_mass: 3.0 * amu
+  alchemical_pme_treatment: exact
+
+mcmc_moves:
+  langevin:
+    #type: MCDisplacementMove # Monte Carlo ligand displacement
+    #type: MCRotationMove # Monte Carlo ligand rotation
+    type: LangevinSplittingDynamicsMove
+    timestep: 4.0*femtosecond
+    collision_rate: 1.0/picosecond
+    reassign_velocities: yes
+    splitting: 'V R O R V'
+    n_steps: 250
+    n_restart_attempts: 4
+
+samplers:
+  repex:
+    type: ReplicaExchangeSampler
+    mcmc_moves: langevin
+    number_of_iterations: 10000
+
+solvents:
+  pme:
+    nonbonded_method: PME
+    switch_distance: 9*angstroms
+    nonbonded_cutoff: 10*angstroms
+    ewald_error_tolerance: 1.0e-4
+    clearance: 9*angstroms
+    positive_ion: Na+
+    negative_ion: Cl-
+    solvent_model: tip3p
 
 molecules:
   t4-lysozyme:
@@ -36,24 +69,13 @@ molecules:
     antechamber:
       charge_method: null
 
-
-solvents:
-  PME:
-    nonbonded_method: PME
-    nonbonded_cutoff: 10*angstroms
-    clearance: 14*angstroms
-    positive_ion: Na+
-    negative_ion: Cl-
-
-
 systems:
   t4-ligand:
     receptor: t4-lysozyme
     ligand: !Combinatorial [benzene, ethylbenzene, isobutylbenzene, indene]
-    solvent: PME
+    solvent: pme
     leap:
       parameters: [oldff/leaprc.ff96, leaprc.gaff]
-
 
 protocols:
   absolute-binding:
@@ -69,5 +91,6 @@ protocols:
 experiments:
   system: t4-ligand
   protocol: absolute-binding
+  sampler: repex
   restraint:
     type: Harmonic
