@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #Walltime
-#BSUB -W 24:00
+#BSUB -W 8:00
 #
 # Set Output file
 #BSUB -o  host-guest-sams.%J.log
 #
 # Specify node group
-#BSUB -m "ls-gpu lt-gpu"
+#BSUB -m "ls-gpu"
 #BSUB -q gpuqueue
 #
 # nodes: number of nodes and GPU request
@@ -18,8 +18,9 @@
 
 echo "LSB_HOSTS: $LSB_HOSTS"
 echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
-module add cuda/9.0
 nvcc --version
+
+env
 
 build_mpirun_configfile "yank script --yaml=cucurbit7uril-sams.yaml"
 

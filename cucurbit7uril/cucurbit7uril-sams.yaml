@@ -13,7 +13,6 @@ options:
   anisotropic_dispersion_cutoff: 9.0*angstroms
 
   minimize: yes
-  number_of_equilibration_iterations: 0
 
   processes_per_experiment: 1
   checkpoint_interval: 50
